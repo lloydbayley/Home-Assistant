@@ -1,0 +1,126 @@
+blueprint:
+  name: Fibaro Swipe (Z-Wave JS)
+  description: 'Create automations for Swipe by Fibaro using the Z-Wave JS integration.'
+  domain: automation
+  input:
+    fibaro_swipe:
+      name: Fibaro Swipe
+      description: List of available Swipe devices.
+      selector:
+        device:
+          integration: zwave_js
+          manufacturer: Fibargroup
+          model: FGGC001
+    swipe_up:
+      name: Swipe Up
+      description: Action to run when swiped up.
+      default: []
+      selector:
+        action: {}
+    swipe_down:
+      name: Swipe Down
+      description: Action to run when swiped down.
+      default: []
+      selector:
+        action: {}
+    swipe_left:
+      name: Swipe Left
+      description: Action to run when swiped left.
+      default: []
+      selector:
+        action: {}
+    swipe_right:
+      name: Swipe Right
+      description: Action to run when swiped right.
+      default: []
+      selector:
+        action: {}
+    sequence_1:
+      name: Sequence 1
+      description: Action to run when sequence 1 is performed
+      default: []
+      selector:
+        action: {}
+    sequence_2:
+      name: Sequence 2
+      description: Action to run when sequence 2 is performed
+      default: []
+      selector:
+        action: {}
+    sequence_3:
+      name: Sequence 3
+      description: Action to run when sequence 3 is performed
+      default: []
+      selector:
+        action: {}
+    sequence_4:
+      name: Sequence 4
+      description: Action to run when sequence 4 is performed
+      default: []
+      selector:
+        action: {}
+    sequence_5:
+      name: Sequence 5
+      description: Action to run when sequence 5 is performed
+      default: []
+      selector:
+        action: {}
+    sequence_6:
+      name: Sequence 6
+      description: Action to run when sequence 6 is performed
+      default: []
+      selector:
+        action: {}
+        
+mode: single
+max_exceeded: silent
+variables:
+  device_id: !input 'fibaro_swipe'
+trigger:
+- platform: event
+  event_type: zwave_js_value_notification
+condition: '{{ trigger.event.data.device_id == device_id }}'
+action:
+- variables:
+    property_key_name: '{{ trigger.event.data.property_key_name }}'
+    property_name: '{{ trigger.event.data.property_name }}'
+    label: '{{ trigger.event.data.label }}'
+    command_class_name: '{{ trigger.event.data.command_class_name }}'
+    value: '{{ trigger.event.data.value }}'
+    node_id: '{{ trigger.event.data.node_id }}'
+- service: logbook.log
+  data:
+    name: Z-Wave JS
+    message: 'received event from Fibaro Swipe - Node {{node_id}}: {{ command_class_name }} - {{
+      value }} - {{ label }}'
+- choose:
+  - conditions: "{{  property_name == 'scene' \n    and property_key_name == '001'\n\
+      \    and value == 'KeyPressed' }}\n"
+    sequence: !input 'swipe_up'
+  - conditions: "{{  property_name == 'scene' \n    and property_key_name == '002'\n\
+      \    and value == 'KeyPressed' \n}}\n"
+    sequence: !input 'swipe_down'
+  - conditions: "{{  property_name == 'scene' \n    and property_key_name == '003'\n\
+      \    and value == 'KeyPressed' \n}}\n"
+    sequence: !input 'swipe_left'
+  - conditions: "{{  property_name == 'scene' \n    and property_key_name == '004'\n\
+      \    and value == 'KeyPressed' \n}}\n"
+    sequence: !input 'swipe_right'
+  - conditions: "{{  property_name == 'scene' \n    and property_key_name == '007'\n\
+      \    and value == 'KeyPressed' \n}}\n"
+    sequence: !input 'sequence_1'
+  - conditions: "{{  property_name == 'scene' \n    and property_key_name == '008'\n\
+      \    and value == 'KeyPressed' \n}}\n"
+    sequence: !input 'sequence_2'               
+  - conditions: "{{  property_name == 'scene' \n    and property_key_name == '009'\n\
+      \    and value == 'KeyPressed' \n}}\n"
+    sequence: !input 'sequence_3'
+  - conditions: "{{  property_name == 'scene' \n    and property_key_name == '010'\n\
+      \    and value == 'KeyPressed' \n}}\n"
+    sequence: !input 'sequence_4'         
+  - conditions: "{{  property_name == 'scene' \n    and property_key_name == '011'\n\
+      \    and value == 'KeyPressed' \n}}\n"
+    sequence: !input 'sequence_5'
+  - conditions: "{{  property_name == 'scene' \n    and property_key_name == '012'\n\
+      \    and value == 'KeyPressed' \n}}\n"
+    sequence: !input 'sequence_6'
